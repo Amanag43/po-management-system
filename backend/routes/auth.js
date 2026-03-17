@@ -30,12 +30,19 @@ router.get('/google/callback',
 
   // This function runs ONLY if Google login succeeded
   (req, res) => {
+    
     // req.user contains the user object from passport strategy
     const user = req.user;
+//     res.status(200).json({
+//   success: true,
+//   token: token,
+//   user: { email: user.email, name: user.name, avatar: user.avatar }
+// });
 
-    // Generate our own JWT token
+//     // Generate our own JWT token
     const token = generateToken(user);
- res.redirect('/auth-success.html?token=${token}'); 
+    
+ res.redirect(`/auth-success.html?token=${token}`); 
 
   }
 );

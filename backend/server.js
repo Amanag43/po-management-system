@@ -63,7 +63,7 @@ app.listen(PORT, async () => {
     // sync({ alter: true }) checks existing tables
     // and adjusts them to match your models
     // USE ONLY IN DEVELOPMENT - never in production
-    await sequelize.sync({ alter: true });
+    await sequelize.sync({ force: false });
     console.log('Models synchronized!');
 
   } catch (err) {

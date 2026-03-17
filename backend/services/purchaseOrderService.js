@@ -2,6 +2,10 @@ const { PurchaseOrder, POItem, Vendor, Product } = require('../models');
 const { calculatePOTotals, calculateLineTotal, generateReferenceNo } = require('./poCalculator');
 const { Op } = require('sequelize');
 const fetch = require('node-fetch'); // for calling external APIs if needed
+// Detect if running in Docker
+const NOTIFICATION_URL = process.env.DOCKER_ENV
+  ? 'http://notifications:5001'  // Docker service name
+  : 'http://localhost:5001';     // Local development
 // ─── GET ALL PURCHASE ORDERS ──────────────────────────
 const getAllPOs = async (status = null) => {
   const queryOptions = {
@@ -174,7 +178,7 @@ const updatePOStatus = async (id, status) => {
 
   await po.update({ status });
   try {
-    await fetch('http://localhost:5001/notify/po-status', {
+    await fetch(`${NOTIFICATION_URL}/notify/po-status`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

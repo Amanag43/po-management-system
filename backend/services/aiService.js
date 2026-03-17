@@ -3,6 +3,7 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // Import AILog model to save logs to PostgreSQL
 const { AILog } = require('../models');
+const AILogMongo = require('../models/AILogMongo'); // MongoDB model for AI logs
 
 // Initialize Gemini with our API key from .env
 // This creates our connection to Google's AI
@@ -45,12 +46,15 @@ const generateDescription = async (productName, category, userEmail = null) => {
   // STEP 5: Save log to PostgreSQL ai_logs table
   // This fulfills the assignment's logging requirement
   try {
-    await AILog.create({
+    await AILogMongo.create({
       productName,
       category: category || 'General',
       generatedDescription: description,
-      userEmail: userEmail || 'anonymous'
+      userEmail: userEmail || 'anonymous',
+      modelUsed: 'gemini-2.5-flash',
+      prompt: prompt.trim()
     });
+    console.log('AI log saved successfully');
   } catch (logError) {
     // If logging fails, don't crash the whole request
     // Logging is non-critical
@@ -62,12 +66,11 @@ const generateDescription = async (productName, category, userEmail = null) => {
 };
 
 // ─── GET ALL AI LOGS ──────────────────────────────────
-// Returns all AI generation logs from PostgreSQL
+// Returns all AI generation logs from MongoDB
 const getAILogs = async () => {
-  const logs = await AILog.findAll({
-    order: [['created_at', 'DESC']], // newest first
-    limit: 50 // last 50 logs only
-  });
+  const logs = await AILogMongo.find()
+  .sort({ createdAt: -1 }) // newest first
+    .limit(50); // last 50 logs only
   return logs;
 };
 

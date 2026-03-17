@@ -2,7 +2,7 @@ const Vendor = require('./Vendor');
 const Product = require('./Product');
 const PurchaseOrder = require('./PurchaseOrders');
 const POItem = require('./POItem');
-const AILog = require('./AILog');
+const AILogMongo = require('./AILogMongo');
 
 // ─── ASSOCIATIONS ─────────────────────────────────────────
 
@@ -50,5 +50,5 @@ module.exports = {
   Product,
   PurchaseOrder,
   POItem,
-  AILog
+  AILogMongo
 };
